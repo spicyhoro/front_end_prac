@@ -1,8 +1,19 @@
 <h1>{{ post.title }}</h1>
 
 {{ post.content|linebreaks }}
+</hr>
+{% for comment in post.comment_set.all %}
+    <li>
+        {{ comment.message }}
+        &dash; <small>{{ comment.updated_at }}</small>
+    </li>
+
+{% endfor %}
+
 
 </hr>
+
+
 
 <a href="{% url 'blog:index' %}">
     목록
@@ -13,3 +24,4 @@
 <a href="{% url 'blog:post_delete' post.id %}">
     삭제
 </a>
+<a href="{%  url "blog:comment_new" post.pk %}"> 댓글쓰기</a>
