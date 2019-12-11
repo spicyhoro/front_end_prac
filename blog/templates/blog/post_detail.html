@@ -5,7 +5,13 @@
 {% for comment in post.comment_set.all %}
     <li>
         {{ comment.message }}
-        &dash; <small>{{ comment.updated_at }}</small>
+        &dash;
+        <a href="{% url "blog:comment_edit" post.pk comment.pk %}">
+            <small>{{ comment.updated_at }}</small>
+        </a>
+        <a href="{% url "blog:comment_delete" post.pk comment.pk %}">
+               <small>삭제</small>
+        </a>
     </li>
 
 {% endfor %}

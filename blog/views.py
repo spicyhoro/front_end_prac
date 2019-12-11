@@ -1,4 +1,4 @@
-from django.shortcuts import render,get_object_or_404
+from django.shortcuts import render,get_object_or_404, resolve_url
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
 from .models import Post, Comment
 from django.urls import reverse_lazy
@@ -22,10 +22,29 @@ class CommentCreatView(CreateView):
     def form_valid(self, form):
         comment = form.save(commit=False)
         comment.post = get_object_or_404(Post, pk=self.kwargs['post_pk']) #kwargs는 url인자
-        super().form_valid(form)
+        return super().form_valid(form)
 
-    def get_absolute_url(self):
-        self.object
+    def get_success_url(self):
+        #현재 저장한 object가 self.object에 존재함!!!
+        return resolve_url(self.object.post)
 
+comment_new = CommentCreatView.as_view()
 
+class CommentUpdateView(UpdateView):
+    model = Comment
+    fields = ['message']
 
+    def get_success_url(self):
+        # 현재 저장한 object가 self.object에 존재함!!!(self.commnet인득?)
+        return resolve_url(self.object.post)
+
+comment_edit = CommentUpdateView.as_view(model=Comment, fields=['message'])
+
+class CommentDeleteView(DeleteView):
+    model = Comment
+
+    def get_success_url(self):
+        # 현재 저장한 object가 self.object에 존재함!!!(self.commnet인득?)
+        return resolve_url(self.object.post)
+
+comment_delete = CommentDeleteView.as_view(model=Comment)
