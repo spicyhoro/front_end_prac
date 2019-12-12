@@ -1,33 +1,46 @@
-<h1>{{ post.title }}</h1>
 
-{{ post.content|linebreaks }}
+{% extends "blog/layout.html" %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+
+            <h1>{{ post.title }}</h1>
+
+            {{ post.content|linebreaks }}
+
+            <a href="{%  url "blog:comment_new" post.pk %}" class="btn btn-primary btn-block"> 댓글쓰기</a>
+                </hr>
+                {% for comment in post.comment_set.all %}
+                    <li>
+                        {{ comment.message }}
+                        &dash;
+                        <a href="{% url "blog:comment_edit" post.pk comment.pk %}">
+                            <small>{{ comment.updated_at }}</small>
+                        </a>
+                        <a href="{% url "blog:comment_delete" post.pk comment.pk %}">
+                               <small>삭제</small>
+                        </a>
+                    </li>
+
+                 {% endfor %}
+
+
 </hr>
-{% for comment in post.comment_set.all %}
-    <li>
-        {{ comment.message }}
-        &dash;
-        <a href="{% url "blog:comment_edit" post.pk comment.pk %}">
-            <small>{{ comment.updated_at }}</small>
-        </a>
-        <a href="{% url "blog:comment_delete" post.pk comment.pk %}">
-               <small>삭제</small>
-        </a>
-    </li>
 
-{% endfor %}
-
-
-</hr>
-
-
-
-<a href="{% url 'blog:index' %}">
-    목록
-</a>
-<a href="{% url 'blog:post_edit' post.id %}">
+        </div>
+    </div>
+</div>
+<a href="{% url 'blog:index' %}" class="btn btn-primary">목록</a>
+<a href="{% url 'blog:post_edit' post.id %}" class="btn btn-primary">
     수정
 </a>
-<a href="{% url 'blog:post_delete' post.id %}">
+<a href="{% url 'blog:post_delete' post.id %}" class="btn btn-danger">
     삭제
 </a>
-<a href="{%  url "blog:comment_new" post.pk %}"> 댓글쓰기</a>
+
+{% endblock %}
+
+
+
+
