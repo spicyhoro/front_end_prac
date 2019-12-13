@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Melon 검색</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+</head>
+<body>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <form id="melon-query-form" class="input-group" style="margin: 20px 0;">
+                    <input type="text" name="q" class="form-control" autocomplete="off" />
+                    <span class="input-group-btn">
+                        <input type="submit" class="btn btn-default" />
+                    </span>
+                </form>
+
+                <ul id="media-list">
+                </ul>
+            </div>
+        </div>
+    </div>
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script id="song-template" type="text/x-template">
+    <div class="media">
+        <div class="media-left">
+            <a href="http://www.melon.com/song/detail.htm?songId=<%= SONGID %>" target="_blank">
+                <img src="<%= ALBUMIMG %>" class="media-object" style="widwth: 64px; height: 64px;" />
+            </a>
+        </div>
+        <div class="media-body">
+            <h4>
+                <a href="http://www.melon.com/song/detail.htm?songId=<%= SONGID %>" target="_blank">
+                    <%= SONGNAME %>
+                </a>
+            </h4>
+            <%= ALBUMNAME %> by
+            <%= ARTISTNAME %>
+        </div>
+    </div>
+</script>
+
+<script> //함수 정의함
+function melon_search(query) {
+    var params = {
+        'query': query,
+    };
+    $.getJSON('http://www.melon.com/search/keyword/index.json?jscallback=?', params)
+        .done(function(resp) {
+            console.log(resp);
+
+            $('#media-list').html(''); //처음에는 그 항목에 html을 비움
+
+            var tpl = _.template
+            $(resp.SONGCONTENTS).each(function() {
+                console.log(this
+                   var html = tpl(this);
+                   $(html).appendTo('#media-list');
+                   ß
+                //아래는 under스코어 문법사용안했을경우씀
+                //$('<div class="media">' +
+                    //'<div class="media-left">' +
+                    //'<a href="http://www.melon.com/song/detail.htm?songId=' + this.SONGID + '" target="_blank">' +
+                    //'<img src="' + this.ALBUMIMG + '" class="media-object" style="widwth: 64px; height: 64px;" />' +
+                    //'</a>' +
+                    //'</div>' +
+                    //'<div class="media-body">' +
+                    //'<h4>' +
+                    //'<a href="http://www.melon.com/song/detail.htm?songId=' + this.SONGID + '" target="_blank">' +
+                    this.SONGNAME +
+                    //'</a>' +
+                    //'</h4>' +
+                    this.ALBUMNAME + ' by ' + this.ARTISTNAME +
+                    //'</div>' +
+                    //'</div>').appendTo('#media-list');
+            });
+        });
+};
+$(function() {
+    $('#melon-query-form').submit(function(e) {
+        e.preventDefault()
+        var q = $(this).find('input[name=q]').val(); //현재 폼내에 input태그중에 name=q인 그 태그의 값을 읽어옵니다,
+        melon_search(q);
+    });
+});
+</script>
+
+</body>
+</html>

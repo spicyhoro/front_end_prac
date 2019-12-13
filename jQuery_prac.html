@@ -77,13 +77,19 @@
               });
 
               $('#lotto-btn').click(function () {
-                  var rendered = '<div class="post">로또 번호를 뽑아봅시다 : ' + (new Date()) + '</div>';
+                  var raw_template = $('#post-template').html(); //해당아래것들을 문자열로만가져옴
+                  var tpl = _.template(raw_template); //이렇게 문자열을 넣어주면 템플릿반환
 
-                  // var container = $('#lotto-list').append(rendered); // append 활용 (목적지.append())
-                  var $added = $(rendered).appendTo('#lotto-list'); // appendTo 활용. (추가할내용쓰고.appendTo(목적지), 추가된 jQuery객체를 리턴. 관습적으로 이름앖에 $붙
-                  $added.click(function() {
-                        $(this).remove(); // 각 항목
-                  });
+                  $('#lotto-btn').click(function() {
+                         var sample = _.sample(_.range(1, 46), 6);
+                         //이렇게 아래처럼 쓰면 알아서 받아서 집어넣고 문자열로 만들어줌
+                         var rendered = tpl({
+                         numbers: sample.slice(0, 5).sort(function(x, y) { return x - y; }),
+                         bonus: sample[5]
+                         });
+                         console.log(rendered);
+                         $(rendered).appendTo('#lotto-list');
+                     });
               });
 
               $('#remove-at-first').click(function() {
@@ -92,6 +98,16 @@
 
               $('#remove-at-last').click(function() {
                  $('#lotto-list div:last').remove();
+              });
+
+              $.ajax({
+                 method: "GET",
+                 url: 'http://www.melon.com/search/keyword/index.json?jscallback=?', // jsonp 핵심포인트 1) : jscallback=? 인자
+                 data: {query: '윤종신'},
+                 dataType: 'json', // jsonp 핵심포인트 2)
+                 cache: false // true 지정 : GET인자로 "_={timestamp}" 를 붙여줍니다. 매번 URL이 달라지므로 브라우저 캐싱되지 않습니다.
+              }).done(function(response) {
+                  console.log(response);
               });
 
         });
