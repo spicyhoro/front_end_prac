@@ -1,5 +1,34 @@
 {% extends "blog/layout.html" %}
 
+{%  block extra_body %}
+<script>
+
+$(function () {
+    $('#page-2-btn').click(function () {
+        $.get('?page=2')
+            .done(function(html) {
+                console.log(html);
+            })
+            .fail(function() {
+                console.log('fail')
+            })
+            .always(function () {
+                console.log('always')
+            })
+            });
+        alert("clicked");
+        return false;
+
+    });
+});
+</script>
+
+
+
+
+
+{%  endblock %}
+
 {% block content %}
 <div class="container">
     <div class="row">
@@ -31,6 +60,10 @@
      			<a href="?page={{ page_obj.next_page_number }}" class="btn btn-default">다음</a>
      {% endif %}
 {% endif %}
+
+</hr>
+<a id="page-2-btn" href="">2페이지 로딩</a>
+
 
 <hr/>
 <a href="{% url "blog:post_new" %}" class="btn btn-primary">새글쓰기

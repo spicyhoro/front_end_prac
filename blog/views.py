@@ -2,12 +2,19 @@ from django.shortcuts import render,get_object_or_404, resolve_url
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
 from .models import Post, Comment
 from django.urls import reverse_lazy
+import time
 
 
 class PostListView(ListView):
     model = Post
     template_name = 'blog/index.html'
     paginate_by = 2
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        time.sleep(3)
+        return context
+
 
 index = PostListView.as_view()
 post_new = CreateView.as_view(model=Post, fields="__all__")
