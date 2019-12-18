@@ -2,7 +2,10 @@ from django.shortcuts import render,get_object_or_404, resolve_url
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
 from .models import Post, Comment
 from django.urls import reverse_lazy
-from django.http import JsonResponse
+from rest_framework.renderers import JSONRenderer
+from django.http import HttpResponse
+from .serializers import PostSerializer
+
 import time
 
 
@@ -66,10 +69,7 @@ comment_delete = CommentDeleteView.as_view(model=Comment)
 def post_list_json(request):
     qs = Post.objects.all()
 
-    post_list = []
-    for post in qs:
-        post_list.append({'id': post.id, 'title': post.title, 'content': post.content,
-             })
-
-    return JsonResponse(post_list, safe=False)
+    serializer = PostSerializer(qs, many=True)
+    json_utf8_string = JSONRenderer().render(serializer.data)
+    return HttpResponse(json_utf8_string, content_type='application/json; charset=utf-8')
 
