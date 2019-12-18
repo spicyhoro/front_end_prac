@@ -2,6 +2,7 @@ from django.shortcuts import render,get_object_or_404, resolve_url
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
 from .models import Post, Comment
 from django.urls import reverse_lazy
+from django.http import JsonResponse
 import time
 
 
@@ -60,3 +61,15 @@ class CommentDeleteView(DeleteView):
         return resolve_url(self.object.post)
 
 comment_delete = CommentDeleteView.as_view(model=Comment)
+
+
+def post_list_json(request):
+    qs = Post.objects.all()
+
+    post_list = []
+    for post in qs:
+        post_list.append({'id': post.id, 'title': post.title, 'content': post.content,
+             })
+
+    return JsonResponse(post_list, safe=False)
+
