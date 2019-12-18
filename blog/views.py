@@ -16,10 +16,6 @@ class PostListView(ListView):
         return ['blog/index.html']
 
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        time.sleep(3)
-        return context
 
 
 index = PostListView.as_view()
