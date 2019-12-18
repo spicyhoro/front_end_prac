@@ -1,8 +1,9 @@
 
-from django.urls import path
+from django.urls import path, include
 from . import views
 from django.conf import settings
 from django.conf.urls.static import static
+
 
 app_name="blog"
 urlpatterns = [
@@ -14,5 +15,6 @@ urlpatterns = [
     path('<int:post_pk>/comments/new/', views.comment_new, name="comment_new"),
     path('<int:post_pk>/comments/<int:pk>/edit/', views.comment_edit, name="comment_edit"),
     path('<int:post_pk>/comments/<int:pk>/delete/', views.comment_delete, name="comment_delete"),
-    path('post.json/', views.post_list_json)
+    path('post.json/', views.post_list_json),
+    path('api/v1/', include('blog.api')),
 ]
