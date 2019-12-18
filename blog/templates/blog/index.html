@@ -8,15 +8,14 @@ $(function () {
         $.get('?page=2')
             .done(function(html) {
                 console.log(html);
+                $('#post-list-wrapper').html(html);
             })
             .fail(function() {
-                console.log('fail')
+                console.log('fail');
             })
             .always(function () {
-                console.log('always')
-            })
+                console.log('always');
             });
-        alert("clicked");
         return false;
 
     });
@@ -32,44 +31,12 @@ $(function () {
 {% block content %}
 <div class="container">
     <div class="row">
-        <div class="col-sm-12">
-             <table class="table table-bordered table-hover">
-                    <tbody>
-                {% for post in post_list %}
-                    <tr>
-                        <td>
-                        <a href="{% url 'blog:post_detail' post.id %}">
-                            {{ post.title }}
-                        </a>
+        <div class="col-sm-12" id="post-list-wrapper">
+            {% include "blog/_post_list.html" %}
 
-                        </td>
-                    </tr>
-                {% endfor %}
-                     </tbody>
-             </table>
+
         </div>
     </div>
-</div>
-</hr>
-{% if is_paginated %}
-     {% if page_obj.has_previous %}
-     			<a href="?page={{ page_obj.previous_page_number }}" class="btn btn-default">이전</a>
-     {% endif %}
-     {{ page_obj.number }} 페이지
-     {% if page_obj.has_next %}
-     			<a href="?page={{ page_obj.next_page_number }}" class="btn btn-default">다음</a>
-     {% endif %}
-{% endif %}
-
-</hr>
-<a id="page-2-btn" href="">2페이지 로딩</a>
-
-
-<hr/>
-<a href="{% url "blog:post_new" %}" class="btn btn-primary">새글쓰기
-</a>
-
-</div>
 </div>
 
 

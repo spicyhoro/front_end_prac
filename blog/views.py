@@ -10,6 +10,12 @@ class PostListView(ListView):
     template_name = 'blog/index.html'
     paginate_by = 2
 
+    def get_template_names(self):
+        if self.request.is_ajax():
+            return ['blog/_post_list.html']
+        return ['blog/index.html']
+
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         time.sleep(3)
