@@ -12,7 +12,7 @@ import time
 class PostListView(ListView):
     model = Post
     template_name = 'blog/index.html'
-    paginate_by = 2
+    paginate_by = 7
 
     def get_template_names(self):
         if self.request.is_ajax():
