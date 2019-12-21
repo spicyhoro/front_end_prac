@@ -8,32 +8,47 @@ $(function() {   //road가 끝나면 아래와 같은 함수가 실행되도록�
      var is_loading = false;  //???
      var current_page = null;
 
+     var load_more = function()  {
+         if (! is_loading ) {
+                     // var search_params = new URLSearchParams(window.location.search); // location.search는 "?page=2"를 가져오고 이것을 URLSearchRarams를 사용해 현재 페이지의 GET인자를 가공
+                     // var current_page = parseInt(search_params.get('page')) || 1; // GET인자 page를 획득하고 없으면 1을 반환
+                     var next_page = (current_page || 1) +1 //current_page를 받아오는데 null이면 1로 대체한다.
+                     var next_page_url = '?page=' + next_page; // 다음 페이지를 요청하기 위한 URL생성 JS는 문자열과 숫자를 더하면 문자열로 반환함,
+                     is_loading = true;
+
+                     $.get(next_page_url).  //안에 주소로 ajax요청을 함, get인자만 주면 다시 해당데이터 응답.
+                         done(function(html) {  //응답을 받은후
+                             $('#post-list tbody').append(html);
+                             current_page = next_page;
+                             //history.pushState({}, '', next_page_url);
+                         }).
+                         fail(function(xhr, textStatus, error) {
+                                 console.log(textStatus);
+                         })
+                         .always(function() {
+                             console.log("always");
+                             is_loading = false;
+                         }); // 항상작동
+                 }
+
+     };
+
      // 매 화면 스크롤마다 호출
      $win.scroll(function() {
          // 문서의 끝에 도달했는가?
          var diff = $(document).height() - $win.height();  //현재 전체 문서의 세로길이 - 윈도우의 세로길지==
-         if ( (!is_loading) && diff == $win.scrollTop() ) {  //is_loading이 false이므로 이것은 True, 값이 같아질때는 아래일어나야함
-                console.log("바닥왔음")
-             // var search_params = new URLSearchParams(window.location.search); // location.search는 "?page=2"를 가져오고 이것을 URLSearchRarams를 사용해 현재 페이지의 GET인자를 가공
-             // var current_page = parseInt(search_params.get('page')) || 1; // GET인자 page를 획득하고 없으면 1을 반환
-             var next_page = (current_page || 1) +1 //current_page를 받아오는데 null이면 1로 대체한다.
-             var next_page_url = '?page=' + next_page; // 다음 페이지를 요청하기 위한 URL생성 JS는 문자열과 숫자를 더하면 문자열로 반환함,
-             is_loading = true;
+         if ( diff == $win.scrollTop() ) {  //is_loading이 false이므로 이것은 True, 값이 같아질때는 아래일어나야함
+             console.log("바닥왔음");
 
-             $.get(next_page_url).  //안에 주소로 ajax요청을 한
-                 done(function(html) {  //응답을 받으
-                     $('#post-list tbody').append(html);
-                     current_page = next_page;
-                     //history.pushState({}, '', next_page_url);
-                 }).
-                 fail(function(xhr, textStatus, error) {
-		                 console.log(textStatus);
-                 })
-                 .always(function() {
-                     console.log("always");
-                     is_loading = false;
-                 }); // 항상작동
-     }});
+             load_more();
+             $("#load-more-btn").click(load_more);
+
+         }
+
+
+
+
+     ß});
  });
 </script>
 
@@ -53,6 +68,8 @@ $(function() {   //road가 끝나면 아래와 같은 함수가 실행되도록�
                 </tbody>
 
             </table>
+
+            <a id="load-more-btn" class="btn btn-primary">Load More</a>
 
 
 
