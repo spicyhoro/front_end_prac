@@ -62,7 +62,7 @@ $(function() {   //road가 끝나면 아래와 같은 함수가 실행되도록�
 
                 var $modal = $('#post-modal');
                 $modal.find('.modal-title').html(json_obj.title); //id같은것에 modal-title class에 그 html 내용 에다가 '얻어온 제목'이라 변경
-                $modal.find('.modal-body').html(json_obj.content);
+                $modal.find('.modal-body').html(json_obj.content); //이렇게 구현한이유는 내용은 DB 응답받아야 가져올수있으므
                 $modal.find('.btn-detail').attr('href', detail_url); //그 태그안에 속성에 href추가함,
                 $modal.modal();
             })
