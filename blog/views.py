@@ -3,8 +3,9 @@ from django.views.generic import ListView, DetailView, UpdateView, DeleteView, C
 from .models import Post, Comment
 from django.urls import reverse_lazy
 from rest_framework.renderers import JSONRenderer
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from .serializers import PostSerializer
+from django.template.defaultfilters import truncatewords
 
 import time
 
@@ -24,8 +25,24 @@ class PostListView(ListView):
 
 index = PostListView.as_view()
 post_new = CreateView.as_view(model=Post, fields="__all__")
-post_detail = DetailView.as_view(model=Post)
+
+
+class PostDetailView(DetailView):
+    model = Post
+    success_url = reverse_lazy('blog:index')
+
+    def render_to_response(self, context, **response_kwargs):
+        if self.request.is_ajax():
+            return JsonResponse({
+                'title': self.object.title,
+                'content': truncatewords(self.object.content, 100),
+            })
+        # 템플릿 렌더링
+        return super().render_to_response(context)
+
+post_detail = PostDetailView.as_view()
 post_edit = UpdateView.as_view(model=Post, fields='__all__')
+
 
 class PostDeleteView(DeleteView):
     model = Post
