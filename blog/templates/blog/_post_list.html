@@ -2,9 +2,9 @@
 {% for post in post_list %}
     <tr>
         <td>
-        <a href="{% url 'blog:post_detail' post.id %}">
-            {{ post.title }}
-        </a>
+                <a href="{% url 'blog:post_detail' post.id %}">
+                    {{ post.title }}
+                </a>
 
         </td>
     </tr>
