@@ -1,5 +1,35 @@
 
 {% extends "blog/layout.html" %}
+
+{% block extra_body %}
+<script>
+$(function() {
+    $(document).on('click', '.ajax-post-confirm', function(e) {
+        e.preventDefault();
+
+        var url = $(this).attr("href");
+        var target_id = $(this).data('target-id'); //현재 링크에 data속성을 가져올떄
+        var message = $(this).data('message');
+
+        if ( confirm(message) ) { //confirm자체가 확인 취소를 물어보고 이는 true false로 입력된다.
+            $.post(url)
+                .done(function () {
+                    $('#' + target_id).remove();
+                })
+                .fail(function (xhr, textStatus, error) {
+                    alert("failed")
+                });
+
+
+        }
+
+        alert('clicked:' + message);
+    });
+});
+
+</script>
+
+{% endblock %}
 {% block content %}
 <div class="container">
     <div class="row">
@@ -12,13 +42,18 @@
             <a href="{%  url "blog:comment_new" post.pk %}" class="btn btn-primary btn-block"> 댓글쓰기</a>
                 </hr>
                 {% for comment in post.comment_set.all %}
-                    <li>
+                    <li id="comment-{{ comment.pk }}">
                         {{ comment.message }}
                         &dash;
                         <a href="{% url "blog:comment_edit" post.pk comment.pk %}">
                             <small>{{ comment.updated_at }}</small>
                         </a>
-                        <a href="{% url "blog:comment_delete" post.pk comment.pk %}">
+                        <a href="{% url "blog:comment_delete" post.pk comment.pk %}"
+                            class="ajax-post-confirm"
+                            data-target-id="comment-{{ comment.pk }}"
+                            data-message="정말 삭제하시겟습니까?"
+                            >
+
                                <small>삭제</small>
                         </a>
                     </li>
