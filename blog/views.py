@@ -6,6 +6,7 @@ from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse, JsonResponse
 from .serializers import PostSerializer
 from django.template.defaultfilters import truncatewords
+from .forms import CommentForm
 
 import time
 
@@ -50,7 +51,7 @@ class PostDeleteView(DeleteView):
 
 class CommentCreatView(CreateView):
     model = Comment
-    fields = ['message']
+    form_class = CommentForm
 
     def form_valid(self, form):
         comment = form.save(commit=False)
