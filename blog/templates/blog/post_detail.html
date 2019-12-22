@@ -1,5 +1,6 @@
 
 {% extends "blog/layout.html" %}
+{%  load bootstrap3 %}
 
 {% block extra_body %}
 <script>
@@ -34,12 +35,25 @@ $(function() {
 <div class="container">
     <div class="row">
         <div class="col-sm-12">
+             <h1>{{ post.title }}</h1>
 
-            <h1>{{ post.title }}</h1>
 
-            {{ post.content|linebreaks }}
+             {{ post.content|linebreaks }}
 
-            <a href="{%  url "blog:comment_new" post.pk %}" class="btn btn-primary btn-block"> 댓글쓰기</a>
+             <hr/>
+             <form action="{% url "blog:comment_new" post.pk %}" method="post">
+                 {%  csrf_token %}
+                 {% bootstrap_form comment_form %}
+                 <input type="submit" class ='btn btn-primary btn-block'/>
+
+             </form>
+
+
+
+
+
+
+            {#<a href="{%  url "blog:comment_new" post.pk %}" class="btn btn-primary btn-block"> 댓글쓰기</a>  #}
                 </hr>
                 {% for comment in post.comment_set.all %}
                     <li id="comment-{{ comment.pk }}">
