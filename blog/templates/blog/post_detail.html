@@ -4,7 +4,41 @@
 
 {% block extra_body %}
 <script>
+
 $(function() {
+     var raw_template = $('#comment-template').html();
+     var tpl = _.template(raw_template);
+
+    $('#comment-form').submit(function(e) {
+        e.preventDefault();
+
+        console.log('submit!');
+
+        var $form = $(this);   //this는 현재 폼 요소를 지징함>>jquery객체로만듬
+        var url = $form.attr('action');  //attr중에 action에는 어디로보낼지 경로 담겨있는것을 가져옴
+        var data = $form.serialize();  //csrfmiddlewaretoken과 message를 담고있는 url encoded된 문자열을 반환해줌
+
+        $.post(url, data)  //ajax로 post함! 클래스뷰에서 판단가능
+ 						.done(function(obj) {   //post해서 응답받은것을 아직 전체 레이아웃이 포함된 html을 받음,
+                 if ( obj.is_success === false ) {
+                 		alert(obj.message);
+                 }
+                 else {
+                 		console.log(obj);
+
+                     $('#comment-list').prepend(tpl(obj));
+
+
+                 $form[0].reset();
+                 }
+
+
+
+            })
+            .fail(function (xhr, textStatus, error) {
+                alert('failed:' + error);
+            });
+    })
     $(document).on('click', '.ajax-post-confirm', function(e) {
         e.preventDefault();
 
@@ -41,7 +75,7 @@ $(function() {
              {{ post.content|linebreaks }}
 
              <hr/>
-             <form action="{% url "blog:comment_new" post.pk %}" method="post">
+             <form id="comment-form" action="{% url "blog:comment_new" post.pk %}" method="post">
                  {%  csrf_token %}
                  {% bootstrap_form comment_form %}
                  <input type="submit" class ='btn btn-primary btn-block'/>
@@ -55,6 +89,7 @@ $(function() {
 
             {#<a href="{%  url "blog:comment_new" post.pk %}" class="btn btn-primary btn-block"> 댓글쓰기</a>  #}
                 </hr>
+                <ul id="'comment-list">
                 {% for comment in post.comment_set.all %}
                     <li id="comment-{{ comment.pk }}">
                         {{ comment.message }}
@@ -71,6 +106,7 @@ $(function() {
                                <small>삭제</small>
                         </a>
                     </li>
+                </ul>
 
                  {% endfor %}
 
@@ -87,6 +123,24 @@ $(function() {
 <a href="{% url 'blog:post_delete' post.id %}" class="btn btn-danger">
     삭제
 </a>
+
+<script type="text/x-template" id="comment-template">
+     <li id="comment-<%= id %>">
+         <%= message %>
+         &dash;
+         <a href="<%= edit_url %>">
+		         <small><%= updated_at %></small>
+         </a>
+
+         <a href="<%= delete_url %>"
+             class="ajax-post-confirm"
+             data-target-id="comment-<%= id %>"
+             data-message="정말 삭제하시겠습니까?">
+             		<small>삭제</small>
+         </a>
+     </li>
+</script>
+
 
 {% endblock %}
 
