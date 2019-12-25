@@ -63,7 +63,14 @@ class CommentCreatView(CreateView):
     def form_valid(self, form):
         comment = form.save(commit=False)
         comment.post = get_object_or_404(Post, pk=self.kwargs['post_pk']) #kwargs는 url인자
-        return super().form_valid(form)
+        response = super().form_valid(form)
+
+        if self.request.is_ajax():  # render_to_response가 호출되지 않습니다.
+            return render(self.request, 'blog/_comment.html', {
+                'comment': comment,
+            })
+        return response
+
 
     def get_success_url(self):
         #현재 저장한 object가 self.object에 존재함!!!
