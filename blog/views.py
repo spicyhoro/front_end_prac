@@ -63,29 +63,16 @@ class CommentCreatView(CreateView):
     def form_valid(self, form):
         comment = form.save(commit=False)
         comment.post = get_object_or_404(Post, pk=self.kwargs['post_pk']) #kwargs는 url인자
-        response = super().form_valid(form)
-
-        if self.request.is_ajax():
-            return JsonResponse({
-                'id': comment.id,
-                'message':  comment.message,
-                'updated_at': comment.updated_at,
-                'edit_url': resolve_url('blog:comment_edit', comment.post.pk, comment.pk),
-                'delete_url': resolve_url('blog:comment_delete', comment.post.pk, comment.pk),
-            })
-        return response # url redirect응답
-
-    def form_invalid(self, form):
-        if self.request.is_ajax():
-            return JsonResponse(dict(form.errors, is_success=False))
-
-        return super().form_invalid(form)
-
-
+        return super().form_valid(form)
 
     def get_success_url(self):
         #현재 저장한 object가 self.object에 존재함!!!
         return resolve_url(self.object.post)
+
+    def get_template_names(self):
+        if self.request.is_ajax():
+            return ['blog/_comment_form.html']
+        return ['blog/comment_form.html']
 
 comment_new = CommentCreatView.as_view()
 
