@@ -91,7 +91,24 @@ class CommentUpdateView(UpdateView):
         # 현재 저장한 object가 self.object에 존재함!!!(self.commnet인득?)
         return resolve_url(self.object.post)
 
-comment_edit = CommentUpdateView.as_view(model=Comment, fields=['message'])
+    def form_valid(self, form):
+        response = super().form_valid(form)
+
+
+        if self.request.is_ajax():  #render_to_response가 호출되지 않습니다.
+            return render(self.request, 'blog/_comment.html', {
+                'comment': self.object,
+            })
+
+        return response
+
+
+    def get_template_names(self):
+        if self.request.is_ajax():
+            return ['blog/_comment_form.html']
+        return ['blog/comment_form.html']
+
+comment_edit = CommentUpdateView.as_view(model=Comment)
 
 class CommentDeleteView(DeleteView):
     model = Comment
