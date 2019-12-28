@@ -130,3 +130,6 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'front_end_prac', 'static'),
     os.path.join(BASE_DIR, 'bower_components'),
 ]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
