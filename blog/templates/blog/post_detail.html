@@ -1,6 +1,6 @@
 
 {% extends "blog/layout.html" %}
-{%  load bootstrap3 %}
+{% load bootstrap3 %}
 
 {% block extra_body %}
 <script>
@@ -32,7 +32,6 @@ $(function() {
                 }
 
                 $modal.modal();
-
             })
             .fail(function (xhr, textStatus, error) {
                 alert('failed:' + error);
@@ -45,54 +44,42 @@ $(function() {
 
 
     $(document).on('submit', '#comment-form-modal form', function(e) {
-
-
         e.preventDefault();
+        console.log("Submit");
 
-        console.log('submit!');
+        // jQuery Form Plugin의 ajaxSubmit을 활용 : ajax로 파일까지 모두 전달
+        $(this).ajaxSubmit({
+                success: function(response, statusText, xhr, $form) {
+                        console.log("---- done ----");
+                        var html = response;
+                        console.log(html);
 
+                        var $resp = $(html);
+                        var target_id = $form.data('target-id');
 
-        var $form = $(this);   //this는 현재 폼 요소를 지징함>>jquery객체로만듬
-        var url = $form.attr('action');  //attr중에 action에는 어디로보낼지 경로 담겨있는것을 가져옴
-        var data = $form.serialize();  //csrfmiddlewaretoken과 message를 담고있는 url encoded된 문자열을 반환해줌
-        var $submit = $form.find('[type=submit]');
-
-        setTimeout(function () {
-            $submit.prop('disabled', true);
-
-                    $.post(url, data)  //ajax로 post함! 클래스뷰에서 판단가능
-                        .done(function (html) {   //post해서 응답받은것을 아직 전체 레이아웃이 포함된 html을 받음,
-                            var $resp = $(html);
-                            var target_id = $form.data('target-id')
-                            console.log(html);
-
-                            if ($resp.find('.has-error').length > 0) {
-                                // validation 에러일 경우, 에러 HTML 응답
-                                // form 태그의 속성정보는 그대로 유지하고, 필드 HTML만변경
+                        if ( $resp.find('.has-error').length > 0 ) {
                                 var fields_html = $resp.html();
                                 $('#comment-form-modal .modal-body form').html(fields_html);
+                        }
+                        else {
+                            if (target_id) {
+                                $('#' + target_id).html($resp.html());
                             }
                             else {
-                                if (target_id) {
-                                    $('#' + target_id).html($resp.html());
-                                }
-                                else {
-                                    $resp.prependTo('#comment-list');
-                                }
-
-                                console.log($resp)
-                                $('#comment-form-modal').modal('hide');
-                                $form[0].reset();
+                                $resp.prependTo('#comment-list');
                             }
-                        })
-                        .fail(function (xhr, textStatus, error) {
-                            alert('failed:' + error);
-                        })
-                        .always(function () {
-                            $submit.prop('disabled', false);
-                        });
-        }, 3000);
-    });
+
+                            $('#comment-form-modal').modal('hide');
+                            $form[0].reset();
+                        }
+                },
+                error: function(xhr, textStatus, error) {
+                    alert('failed : ' + error);
+                },
+                complete: function(xhr, textStatus) {
+                }
+        });
+    })
 
 
     $(document).on('click', '.ajax-post-confirm', function (e) {
