@@ -10,6 +10,7 @@ $(function() {
         e.preventDefault();
 
         var action_url = $(this).attr('href');
+        var target_id = $(this).data('target-id');
 
         $.get(action_url)
             .done(function (form_html) {
@@ -19,6 +20,16 @@ $(function() {
 
                 $form = $modal.find('.modal-body form');
                 $form.attr('action', action_url);
+
+                if ( target_id ) {  //target_id값 존재시
+                 // modal form에 data-target-id속성을 기록
+                 // - $form.data('target-id', target_id); 를 써봤으나,
+                 // 지정이 되지않아서 attr로 변경
+                     $form.attr('data-target-id', target_id);
+                }
+                else {
+		             $form.removeData('target-id'); //target-id정보 제거
+                }
 
                 $modal.modal();
 
@@ -52,24 +63,31 @@ $(function() {
                     $.post(url, data)  //ajax로 post함! 클래스뷰에서 판단가능
                         .done(function (html) {   //post해서 응답받은것을 아직 전체 레이아웃이 포함된 html을 받음,
                             var $resp = $(html);
+                            var target_id = $form.data('target-id')
+                            console.log(html);
 
                             if ($resp.find('.has-error').length > 0) {
                                 // validation 에러일 경우, 에러 HTML 응답
                                 // form 태그의 속성정보는 그대로 유지하고, 필드 HTML만변경
                                 var fields_html = $resp.html();
                                 $('#comment-form-modal .modal-body form').html(fields_html);
-                            } else {
-                                $resp.prependTo('#comment-list');
+                            }
+                            else {
+                                if (target_id) {
+                                    $('#' + target_id).html($resp.html());
+                                }
+                                else {
+                                    $resp.prependTo('#comment-list');
+                                }
+
+                                console.log($resp)
                                 $('#comment-form-modal').modal('hide');
                                 $form[0].reset();
                             }
                         })
-
-
                         .fail(function (xhr, textStatus, error) {
                             alert('failed:' + error);
                         })
-
                         .always(function () {
                             $submit.prop('disabled', false);
                         });

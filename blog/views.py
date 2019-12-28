@@ -117,7 +117,7 @@ class CommentDeleteView(DeleteView):
         # 현재 저장한 object가 self.object에 존재함!!!(self.commnet인득?)
         return resolve_url(self.object.post)
 
-comment_delete = CommentDeleteView.as_view(model=Comment)  
+comment_delete = CommentDeleteView.as_view(model=Comment)
 
 
 def post_list_json(request):
