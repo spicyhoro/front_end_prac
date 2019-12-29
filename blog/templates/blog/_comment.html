@@ -1,7 +1,11 @@
-<li id="comment-{{ comment.pk }}">
-    {% if comment.photo %} //모두가 photo가 있는 것이 아니므로 꼭 해주기
-    		 <img src="{{ comment.photo.url }}" style="width: 100px;" />
-     {% endif %}
+{% load thumbnail %}
+
+<li id="comment-{{ comment.pk }}" class="media">
+    {%  if comment.photo %}
+        <img src="{% thumbnail comment.photo 100x100 crop %}" style="width: 100px;"/>
+    {% endif %}
+
+
     {{ comment.message }}
     &dash;
     <a href="{% url "blog:comment_edit" comment.post.pk comment.pk %}" class="comment-form-btn"
