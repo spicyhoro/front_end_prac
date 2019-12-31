@@ -63,6 +63,12 @@ class CommentListView(ListView):
         #self.kwargs를 가져오면 url에서 post_ argu를 다 가져옴!!!
         qs = super().get_queryset()
         qs = qs.filter(post__id = self.kwargs['post_pk'])
+
+        latest_comment_id = self.request.GET.get('latest_comment_id', None)
+        if latest_comment_id:
+            # lt : less than <
+            # gt : greater than >
+            qs = qs.filter(id__gt=latest_comment_id)
         return qs
 
 comment_list = CommentListView.as_view()
