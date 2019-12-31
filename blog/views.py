@@ -56,6 +56,18 @@ class PostDeleteView(DeleteView):
     model = Post
     success_url = reverse_lazy('blog:index')
 
+class CommentListView(ListView):
+    model = Comment
+
+    def get_queryset(self):
+        #self.kwargs를 가져오면 url에서 post_ argu를 다 가져옴!!!
+        qs = super().get_queryset()
+        qs = qs.filter(post__id = self.kwargs['post_pk'])
+        return qs
+
+comment_list = CommentListView.as_view()
+
+
 class CommentCreatView(CreateView):
     model = Comment
     form_class = CommentForm
